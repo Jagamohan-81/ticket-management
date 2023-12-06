@@ -1,0 +1,417 @@
+<div class="container">
+  <h1>Ticket Calender</h1>
+  <div class="d-flex justify-content-between col-12 mb-3">
+    <div class="color-legend col-6 row align-items-center">
+      <div class="col-2 align-items-center">
+        <span class="badge bg-primary color-box"></span> Todo
+      </div>
+      <div class="col-3">
+        <span class="badge bg-warning color-box"></span> In Progress
+      </div>
+      <div class="col-2">
+        <span class="badge bg-success color-box"></span> Done
+      </div>
+      <div class="col-3">
+        <span class="badge bg-secondary color-box"></span> Scheduled
+      </div>
+    </div>
+    <button class="btn btn-primary" (click)="openPopup()">Create New</button>
+  </div>
+  <div class="loader-container" *ngIf="loading">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <full-calendar [options]="calendarOptions"></full-calendar>
+</div>
+<div
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{ display: displayStyle }"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Creeate Ticket</h4>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="closePopup()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <form [formGroup]="ticketForm">
+            <div class="form-group">
+              <label for="title">Title:</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="title"
+                id="title"
+                placeholder="Enter title"
+              />
+              <div
+                *ngIf="
+                  ticketForm.controls['title'].invalid &&
+                  (ticketForm.controls['title'].dirty ||
+                    ticketForm.controls['title'].touched)
+                "
+              >
+                <div
+                  *ngIf="ticketForm.controls['title'].errors"
+                  class="text-danger"
+                >
+                  Please enter title
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description:</label>
+              <textarea
+                class="form-control"
+                id="description"
+                placeholder="Enter description"
+                formControlName="description"
+              ></textarea>
+              <div
+                *ngIf="
+                  ticketForm.controls['description'].invalid &&
+                  (ticketForm.controls['description'].dirty ||
+                    ticketForm.controls['description'].touched)
+                "
+              >
+                <div
+                  *ngIf="ticketForm.controls['description'].errors"
+                  class="text-danger"
+                >
+                  Please enter description
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="assignee">Assignee:</label>
+              <select
+                class="form-control"
+                id="assignee"
+                formControlName="assigned_to"
+              >
+                <option value="">Select Developer Name</option>
+                <option [value]="dev.id" *ngFor="let dev of developers">
+                  {{ dev?.first_name + dev?.last_name }}
+                </option>
+              </select>
+              <div
+                *ngIf="
+                  ticketForm.controls['assigned_to'].invalid &&
+                  (ticketForm.controls['assigned_to'].dirty ||
+                    ticketForm.controls['assigned_to'].touched)
+                "
+              >
+                <div
+                  *ngIf="ticketForm.controls['assigned_to'].errors"
+                  class="text-danger"
+                >
+                  Please Assigne someone !
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="priority">Priority:</label>
+              <select
+                class="form-control"
+                id="priority"
+                formControlName="priority"
+              >
+                <option value="1">Low</option>
+                <option value="2">Medium</option>
+                <option value="3">High</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="scheduleOption">Choose an option:</label>
+              <div class="d-flex">
+                <div class="form-check me-2">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    id="createNow"
+                    value="createNow"
+                    [checked]="!schedule_option"
+                    (change)="handleOptionChange()"
+                  />
+                  <label class="form-check-label" for="createNow"
+                    >Create Now</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input
+                    type="radio"
+                    class="form-check-input"
+                    id="schedule"
+                    value="schedule"
+                    [checked]="schedule_option"
+                    (change)="handleOptionChange()"
+                  />
+                  <label class="form-check-label" for="schedule"
+                    >Schedule</label
+                  >
+                </div>
+              </div>
+              <div class="form-group" *ngIf="schedule_option">
+                <label for="scheduled_time">Schedule Date:</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="scheduled_time"
+                  formControlName="scheduled_time"
+                />
+                <div
+                  *ngIf="
+                    ticketForm.controls['scheduled_time'].invalid &&
+                    (ticketForm.controls['scheduled_time'].dirty ||
+                      ticketForm.controls['scheduled_time'].touched)
+                  "
+                >
+                  <div
+                    *ngIf="
+                      ticketForm
+                        .get('scheduled_time')
+                        ?.hasError('minDateNotMet')
+                    "
+                    class="text-danger"
+                  >
+                    Schedule date must be at least 2 days in the future.
+                  </div>
+                  <div
+                    *ngIf="
+                      ticketForm.get('scheduled_time')?.hasError('invalidDate')
+                    "
+                    class="text-danger"
+                  >
+                    Date required for schedule ticket !
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" (click)="ticketSubmit()">
+          <!-- [disabled]="ticketForm.invalid" -->
+          Submit
+        </button>
+        <button type="button" class="btn btn-danger" (click)="closePopup()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+//edit
+
+<div
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{ display: editDisplayStyle }"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ ticketFormEdit.get("title")?.value }}</h4>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="editFormPopupClose()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <form [formGroup]="ticketFormEdit">
+            <div class="form-group">
+              <label for="title">Title:</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="title"
+                id="title"
+                placeholder="Enter title"
+                [readOnly]="!editForm"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description:</label>
+              <textarea
+                class="form-control"
+                id="description"
+                placeholder="Enter description"
+                formControlName="description"
+                [readOnly]="!editForm"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="assignee">Assignee:</label>
+              <select
+                class="form-control"
+                id="assigned_to"
+                formControlName="assigned_to"
+                *ngIf="editForm"
+              >
+                <option value="">Select Developer Name</option>
+                <option [value]="dev.id" *ngFor="let dev of developers">
+                  {{ dev?.first_name + dev?.last_name }}
+                </option>
+              </select>
+              <input
+                *ngIf="!editForm"
+                type="text"
+                class="form-control"
+                [defaultValue]="assignee"
+                id="assigned_to"
+                [readOnly]="!editForm"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="priority">Priority:</label>
+              <select
+                class="form-control"
+                id="priority"
+                formControlName="priority"
+                *ngIf="editForm"
+              >
+                <option value="1">Low</option>
+                <option value="2">Medium</option>
+                <option value="3">High</option>
+              </select>
+              <input
+                *ngIf="!editForm"
+                type="text"
+                class="form-control"
+                [defaultValue]="priority_status"
+                id="priority"
+                [readOnly]="!editForm"
+              />
+            </div>
+            <div class="form-group">
+              <label for="created_by">Created By : </label>
+              <span>{{ ticketFormEdit.get("created_by")?.value }}</span>
+            </div>
+            <div class="form-group">
+              <label for="created_time">Created At :</label>
+              <span>{{
+                ticketFormEdit.get("created_time")?.value | date
+              }}</span>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <button
+          class="btn btn-danger"
+          *ngIf="userRole == 'M'"
+          (click)="confirmBox()"
+        >
+          Delete
+        </button>
+        <button
+          class="btn"
+          [ngClass]="editForm ? 'btn-success' : 'btn-primary'"
+          (click)="handleEditSubmit()"
+          *ngIf="allowToEdit()"
+        >
+          {{ editForm ? "Submit" : "Edit" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+//scheduled
+
+<div
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{ display: scheduleDisplay }"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ sheduleFormEdit.get("title")?.value }}</h4>
+        <button
+          type="button"
+          class="btn-close"
+          aria-label="Close"
+          (click)="scheduleFormPopupClose()"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <form [formGroup]="sheduleFormEdit">
+            <div class="form-group">
+              <label for="title">Title:</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="title"
+                id="title"
+                placeholder="Enter title"
+                [readOnly]="!editForm"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="description">Description:</label>
+              <textarea
+                class="form-control"
+                id="description"
+                placeholder="Enter description"
+                formControlName="description"
+                [readOnly]="!editForm"
+              ></textarea>
+            </div>
+            <div class="form-group">
+              <label for="scheduled_time">Scheduled Date:</label>
+              <input
+                type="date"
+                class="form-control"
+                id="scheduled_time"
+                formControlName="scheduled_time"
+                [readOnly]="!editForm"
+              />
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <button
+          class="btn btn-danger"
+          *ngIf="userRole == 'M'"
+          (click)="confirmBox()"
+        >
+          Delete
+        </button>
+        <button
+          class="btn"
+          [ngClass]="editForm ? 'btn-success' : 'btn-primary'"
+          (click)="handleFutureEdit()"
+          *ngIf="allowToEdit()"
+        >
+          {{ editForm ? "Submit" : "Edit" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

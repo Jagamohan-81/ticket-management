@@ -1,0 +1,95 @@
+<div class="container mt-3">
+  <h2>Subjects</h2>
+  <div *ngIf="userRole === 'T'" class="">
+    <div class="col-12">
+      <form (ngSubmit)="onSubmit()" #subjectForm="ngForm" class="row">
+        <div class="form-group col-8">
+          <label for="subjectName">Subject Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="subjectName"
+            name="subjectName"
+            [(ngModel)]="newSubject.name"
+            required
+          />
+        </div>
+        <button type="submit" class="btn btn-primary mt-3 col-4">Add Subject</button>
+      </form>
+    </div>
+    
+
+
+
+    
+    <div class="row mt-3">
+      <div class="mt-3" class="col-4">
+        <label for="subjectDropdown">Select Subject To Rename:</label>
+        <select
+          class="form-control"
+          id="subjectDropdown"
+          [(ngModel)]="selectedSubject"
+          name="selectedSubject"
+        >
+          <option *ngFor="let subject of subjects" [value]="subject.id">
+            {{ subject.name }}
+          </option>
+        </select>
+      </div>
+      <div class="mt-3" *ngIf="selectedSubject" class="col-8">
+        <form (ngSubmit)="onEditSubmit()" #editForm="ngForm" class="row">
+          <div class="form-group col-8">
+            <label for="editedSubjectName">Edited Subject Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="editedSubjectName"
+              name="editedSubjectName"
+              placeholder="Please write the updated name"
+              [(ngModel)]="editedSubject.name"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-success mt-3 col-4">Save Changes</button>
+        </form>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- Display Subject List -->
+  <div class="mt-3 col-12">
+    <h3>Subject List</h3>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Sl</th>
+          <th>Name</th>
+          <th>Avg Mark</th>
+          <th *ngIf="userRole=='T'">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let subject of subjects; let i = index">
+          <td>
+            {{ i + 1 }}
+          </td>
+          <td>
+            {{ subject.name }}
+          </td>
+          <td>
+            {{ calculateAvg(subject.name) }}
+          </td>
+          <td *ngIf="userRole=='T'">
+            <button class="btn btn-danger" (click)="deleteSubject(subject)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- <ul>
+      <li *ngFor="let subject of subjects">{{ subject.name }}</li>
+    </ul> -->
+  </div>
+</div>

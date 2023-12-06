@@ -1,0 +1,124 @@
+<div class="container mt-4">
+  <div class="loader-container" *ngIf="loading">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 offset-md-3">
+      <div class="card" *ngIf="profileForm.get('email')?.value != ''">
+        <div class="card-header">
+          <h4 class="card-title">User Profile</h4>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>First Name</th>
+                  <th>Last Name</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    {{ profileForm.get('email')?.value}}
+                  </td>
+                  <td>
+                    {{ profileForm.get('first_name')?.value }}
+                  </td>
+                  <td>
+                    {{ profileForm.get('last_name')?.value }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Edit Profile and Logout buttons -->
+          <div class="text-center mt-7">
+            <button class="btn btn-primary" (click)="openPopup()">
+              Edit Profile
+            </button>
+            <button class="btn btn-danger mx-2" (click)="logout()">
+              Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="modal"
+    tabindex="-1"
+    role="dialog"
+    [ngStyle]="{ display: displayStyle }"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Update Profile</h4>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="profileForm">
+                <div class="loader-container" *ngIf="loading">
+                  <div class="spinner-border text-success" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <label for="email">Email</label>
+                  <input
+                    type="email"
+                    formControlName="email"
+                    id="email"
+                    class="form-control"
+                    readonly
+                    required
+                  />
+                </div>
+                <div class="col-12">
+                  <label for="first_name">First Name</label>
+                  <input
+                    type="text"
+                    formControlName="first_name"
+                    id="first_name"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-12">
+                  <label for="last_name">Last Name</label>
+                  <input
+                    type="text"
+                    formControlName="last_name"
+                    id="last_name"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="col-12" >
+                  <label for="password">Password</label>
+                  <input
+                    type="password"
+                    formControlName="password"
+                    id="password"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                
+              </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" (click)="editProfile()">
+            Submit
+          </button>
+          <button type="button" class="btn btn-danger" (click)="closePopup()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

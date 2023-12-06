@@ -1,0 +1,31 @@
+/* login.component.scss */
+.container {
+    margin-top: 50px;
+  }
+  
+  .card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-header {
+    background-color: #3498db;
+    color: #fff;
+  }
+  
+  .btn-primary {
+    background-color: #3498db;
+    border: none;
+  }
+  
+  .btn-primary:hover {
+    background-color: #2980b9;
+  }
+  
+  .loader-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000; 
+  }
+  

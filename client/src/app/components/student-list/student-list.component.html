@@ -1,0 +1,104 @@
+<div class="d-flex justify-content-between">
+  <div class="col-3">
+    <h2>{{ edit_id === 0 ? "Create Form" : "Edit Form" }}</h2>
+    
+    <form [formGroup]="studentForm">
+      <div class="loader-container" *ngIf="loading">
+        <div class="spinner-border text-success" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div class="col-12">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          formControlName="email"
+          id="email"
+          class="form-control"
+          [readonly]="edit_id !== 0"
+          required
+        />
+      </div>
+      <div class="col-12">
+        <label for="first_name">First Name</label>
+        <input
+          type="text"
+          formControlName="first_name"
+          id="first_name"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="col-12">
+        <label for="last_name">Last Name</label>
+        <input
+          type="text"
+          formControlName="last_name"
+          id="last_name"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="col-12" *ngIf="edit_id == 0">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          formControlName="password"
+          id="password"
+          class="form-control"
+          required
+        />
+      </div>
+      <div class="text-center mt-3">
+        <button class="btn btn-success" (click)="onSubmit()">
+          {{ edit_id === 0 ? "Add New" : "Save Edit" }}
+        </button>
+        <button
+          class="btn btn-primary ms-2"
+          (click)="clearInputForm()"
+          *ngIf="edit_id != 0"
+        >
+          Add New
+        </button>
+      </div>
+    </form>
+  </div>
+  <div class="col-8">
+    <h2>Student List</h2>
+    <div class="col-12">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Id</th>
+            <th>Email</th>
+            <th>Name</th>
+            <th class="text-center">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let student of studentList">
+            <td>{{ student.id }}</td>
+            <td>{{ student.email }}</td>
+            <td>{{ student.first_name + " " + student.last_name }}</td>
+
+            <td class="d-flex justify-content-around">
+              <button (click)="handleEdit(student)" class="btn btn-success">
+                Edit
+              </button>
+
+              <a
+                class="btn btn-warning"
+                [routerLink]="['/student-details', student.id]"
+              >
+                View
+              </a>
+              <button (click)="handleDelete(student)" class="btn btn-danger">
+                Remove
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,170 @@
+<div class="container">
+  <div class="loader-container" *ngIf="loading">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div class="row">
+    <h2>Records</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Email</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Role</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ studentDetails?.id }}</td>
+          <td>{{ studentDetails?.email }}</td>
+          <td>{{ studentDetails?.first_name }}</td>
+          <td>{{ studentDetails?.last_name }}</td>
+          <td>{{ studentDetails?.role=="S" ? 'Student' :null }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row">
+    <h2>Performance</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Sl</th>
+          <th>Subject</th>
+          <th>Scored Mark</th>
+          <th>Full Mark</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let mark of all_marks; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ mark?.subject_name }}</td>
+          <td >{{ mark?.mark }}</td>
+          <td>100</td>
+          <td>
+            <button
+              type="button"
+              class="btn btn-danger"
+              (click)="deleteMark(mark.id)"
+            >
+              Delete
+            </button>
+            <button
+              type="button"
+              class="btn btn-warning ms-3"
+              (click)="openPopup(mark)"
+              
+            >
+              Edit
+            </button>
+            
+          </td>
+          
+        </tr>
+        <tr>
+          <td colspan="2">Total</td>
+          <td>{{ calculateTotalMarks() }}</td>
+          <td>{{ all_marks.length * 100 }}</td>
+          
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="row">
+    <h2>Give Marks</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Secured Mark</th>
+          <th>Submit</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <select
+              class="form-control"
+              id="subjectDropdown"
+              [(ngModel)]="selectedSubject"
+              name="selectedSubject"
+            >
+              <option *ngFor="let subject of subjects" [value]="subject.name">
+                {{ subject.name }}
+              </option>
+            </select>
+          </td>
+          <td>
+            <input
+              type="number"
+              placeholder="mark"
+              class="form-control"
+              [(ngModel)]="securedMark"
+            />
+          </td>
+          <td>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              (click)="submitMark()"
+            >
+              Submit
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- <button
+  style="margin: 50px; padding: 10px"
+  type="button"
+  class="btn btn-primary"
+  >Show Data 
+</button>  -->
+<div
+  class="modal"
+  tabindex="-1"
+  role="dialog"
+  [ngStyle]="{'display':displayStyle}"> 
+  <div class="modal-dialog" role="document"> 
+    <div class="modal-content"> 
+      <div class="modal-header"> 
+        <h4 class="modal-title">Update Mark</h4> 
+      </div> 
+      <div class="modal-body"> 
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Mark</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{edit_mark.subject_name}}</td>
+              <td><input type="number" name="edit" id="edit"[defaultValue]="edit_mark.mark" [(ngModel)]="edit_mark.mark"></td>
+            </tr>
+          </tbody>
+
+        </table> 
+  
+      </div> 
+      <div class="modal-footer"> 
+        <button type="button" class="btn btn-primary" 
+                (click)="editMark()"> 
+          Submit 
+        </button> 
+        <button type="button" class="btn btn-danger" 
+                (click)="closePopup()"> 
+          Close 
+        </button> 
+      </div> 
+    </div> 
+  </div> 
+</div>
+</div>

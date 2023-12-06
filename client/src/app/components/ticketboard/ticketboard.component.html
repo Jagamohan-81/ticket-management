@@ -1,0 +1,366 @@
+<div class="container-fluid pt-2">
+  <div class="loader-container" *ngIf="loading">
+    <div class="spinner-border text-success" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+  <div class="container dashboard-container mb-5">
+    <div class="col-12">
+      <div class="d-flex justify-content-between">
+        <h2>Ticket Dashboard</h2>
+        <div *ngIf="userRole == 'M'">
+          <button class="btn button" (click)="openPopup()">New Ticket</button>
+        </div>
+        <!-- <div *ngIf="userRole == 'D'">
+          <button class="btn button" (click)="showMyTickets()">{{mytickets?'View All':'My Tickets'}}</button>
+        </div> -->
+      </div>
+    </div>
+    <div class="row">
+      <!-- Total Tickets Card -->
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Total Tickets</h5>
+            <p class="card-text">{{ ticketsArray.length }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tickets for Current User Card -->
+      <div class="col-md-4" *ngIf="userRole == 'D'">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tickets for You</h5>
+            <p class="card-text">{{ ticketsForYou.length }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tickets in Different Statuses Card -->
+      <div class="col-md-4">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tickets in Different Statuses</h5>
+            <div class="d-flex justify-content-between">
+              <span>Open: {{ filterTicket("Todo").length }} </span>
+              <span>In Progress: {{ filterTicket("In Progress").length }}</span>
+              <span>Resolved: {{ filterTicket("Done").length }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row pt-1">
+      <div class="col" id="3" *ngFor="let staus of status">
+        <div
+          class="card card-bg border"
+          (dragover)="allowDrop($event)"
+        >
+          <div class="card-header border-0 py-1 text-center">{{ staus }}</div>
+          <div class="card-body ticket-bg" id="3" >
+            <div
+              draggable="true"
+              *ngFor="let ticket of filterTicket(staus);let i =index"
+              class="card-Body-Hover m-1 rounded-1 task border"
+              (dragstart)="drag($event, ticket,i)"
+              (click)="handleView(ticket)"
+              (drop)="drop($event, staus,ticket)"
+
+            >
+              <div class="my-1 fw-bold d-flex justify-content-between">
+                <span>{{ ticket.id }} {{ ticket.title }}</span>
+                <span
+                  [ngClass]="
+                    ticket.priority == 'Medium'
+                      ? 'border-warning'
+                      : ticket.priority == 'High'
+                      ? 'border-danger'
+                      : 'border-success'
+                  "
+                  class="priority-sign"
+                ></span>
+              </div>
+              <div class="row">
+                <div class="col-3">
+                  <!-- <p class="text-muted space-font m-0 pointer">
+                    {{ ticket.description }}
+                  </p> -->
+                </div>
+                <div class="col-9 text-end">
+                  <p class="d-flex flex-col">
+                    <span>
+                      Created By :
+                      {{
+                        ticket.created_by.first_name +
+                          ticket.created_by.last_name
+                      }}
+                    </span>
+                    <span>
+                      Assignee :
+                      {{
+                        ticket.assigned_to.first_name +
+                          ticket.assigned_to.last_name
+                      }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12 text-end"><span>Date : {{ticket.created_time|date
+                }}</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="modal"
+    tabindex="-1"
+    role="dialog"
+    [ngStyle]="{ display: displayStyle }"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Creeate Ticket</h4>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closePopup()"></button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <form [formGroup]="ticketForm">
+              <div class="form-group">
+                <label for="title">Title:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="title"
+                  id="title"
+                  placeholder="Enter title"
+                />
+                <div
+                  *ngIf="
+                    ticketForm.controls['title'].invalid &&
+                    (ticketForm.controls['title'].dirty ||
+                      ticketForm.controls['title'].touched)
+                  "
+                >
+                  <div
+                    *ngIf="ticketForm.controls['title'].errors"
+                    class="text-danger"
+                  >
+                    Please enter title
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea
+                  class="form-control"
+                  id="description"
+                  placeholder="Enter description"
+                  formControlName="description"
+                ></textarea>
+                <div
+                  *ngIf="
+                    ticketForm.controls['description'].invalid &&
+                    (ticketForm.controls['description'].dirty ||
+                      ticketForm.controls['description'].touched)
+                  "
+                >
+                  <div
+                    *ngIf="ticketForm.controls['description'].errors"
+                    class="text-danger"
+                  >
+                    Please enter description
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="assignee">Assignee:</label>
+                <select
+                  class="form-control"
+                  id="assignee"
+                  formControlName="assigned_to"
+                >
+                  <option value="">Select Developer Name</option>
+                  <option [value]="dev.id" *ngFor="let dev of developers">
+                    {{ dev?.first_name + dev?.last_name }}
+                  </option>
+                </select>
+                <div
+                  *ngIf="
+                    ticketForm.controls['assigned_to'].invalid &&
+                    (ticketForm.controls['assigned_to'].dirty ||
+                      ticketForm.controls['assigned_to'].touched)
+                  "
+                >
+                  <div
+                    *ngIf="ticketForm.controls['assigned_to'].errors"
+                    class="text-danger"
+                  >
+                    Please Assigne someone !
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="priority">Priority:</label>
+                <select
+                  class="form-control"
+                  id="priority"
+                  formControlName="priority"
+                >
+                  <option value="1">Low</option>
+                  <option value="2">Medium</option>
+                  <option value="3">High</option>
+                </select>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn button"
+            (click)="ticketSubmit()"
+            [disabled]="ticketForm.invalid"
+          >
+            Submit
+          </button>
+          <button type="button" class="btn btn-danger" (click)="closePopup()">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+ 
+ 
+ 
+  <div
+    class="modal"
+    tabindex="-1"
+    role="dialog"
+    [ngStyle]="{ display: editDisplayStyle }"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">{{ticketFormEdit.get('title')?.value}}</h4>
+          <button type="button" class="btn-close" aria-label="Close" (click)="editFormPopupClose()"></button>
+
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <form [formGroup]="ticketFormEdit">
+              <div class="form-group">
+                <label for="title">Title:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="title"
+                  id="title"
+                  placeholder="Enter title"
+                  [readOnly]="!editForm"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea
+                  class="form-control"
+                  id="description"
+                  placeholder="Enter description"
+                  formControlName="description"
+                  [readOnly]="!editForm"
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label for="assignee">Assignee:</label>
+                <select
+                  class="form-control"
+                  id="assigned_to"
+                  formControlName="assigned_to"
+                  *ngIf="editForm"
+
+                  
+                >
+                  <option value="">Select Developer Name</option>
+                  <option [value]="dev.id" *ngFor="let dev of developers">
+                    {{ dev?.first_name + dev?.last_name }}
+                  </option>
+                </select>
+                <input 
+                  *ngIf="!editForm"
+                  type="text"
+                  class="form-control"
+                  [defaultValue]="assignee"
+                  id="assigned_to"
+                  [readOnly]="!editForm"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="priority">Priority:</label>
+                <select
+                  class="form-control"
+                  id="priority"
+                  formControlName="priority"
+                  *ngIf="editForm"
+                  
+                >
+                  <option value="1">Low</option>
+                  <option value="2">Medium</option>
+                  <option value="3">High</option>
+                </select>
+                <input 
+                  *ngIf="!editForm"
+                  type="text"
+                  class="form-control"
+                  [defaultValue]="priority_status"
+                  id="priority"
+                  [readOnly]="!editForm"
+                />
+              </div>
+              <div class="form-group">
+                <label for="created_by">Created By : </label>
+                <span
+                >{{ticketFormEdit.get('created_by')?.value}}</span>
+              </div>
+              <div class="form-group">
+                <label for="created_time">Created At :</label>
+                <span
+                >{{ticketFormEdit.get('created_time')?.value|date}}</span>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="modal-footer d-flext justify-content-between">
+          <button type="button" class="btn btn-danger" (click)="handleDelete()" *ngIf="userRole=='M'">
+            Delete
+          </button>
+          <button
+            type="button"
+            class="btn button"
+            (click)="handleEditSubmit()"
+            *ngIf="allowToEdit()"
+          >
+            {{editForm?'Submit':'Edit'}}
+          </button>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

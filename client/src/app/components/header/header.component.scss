@@ -1,0 +1,24 @@
+.header-blue {
+    background:linear-gradient(135deg, #172a74, #21a9af);
+    color: #f0f0f0;
+    background-color:#184e8e;
+    padding: 1% ;
+    font-family:'Source Sans Pro', sans-serif;
+  }
+  .nav-link {
+    border-radius: 5px;
+    margin-right: 2px;
+    color: #f0f0f0;
+    border: 1px solid transparent; /* Set a transparent border initially */
+    transition: border-color 0.3s ease; /* Add a smooth transition for the border */
+  }
+  
+  .nav-link:hover {
+    border-color: red;
+  }
+  
+  .activebutton {
+    // border: 1px solid red;
+    border-color: #f0f0f0; 
+  }
+  

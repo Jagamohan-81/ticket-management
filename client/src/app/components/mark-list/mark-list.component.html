@@ -1,0 +1,29 @@
+<div class="row">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Sl</th>
+        <th>Subject</th>
+        <th>Scored Mark</th>
+        <th>Full Mark</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mark of all_marks;let i = index">
+        <td>{{i+1}}</td>
+        <td>{{mark.subject_name}}</td>
+        <td>{{mark.mark}}</td>
+        <td>100</td> 
+        <!-- fullmark not stored in api yet -->
+        
+      </tr>
+      <tr>
+        <td colspan="2">Total</td>
+        <td>{{ calculateTotalMarks() }}</td>
+        <td>{{all_marks.length*100}}</td>
+        <td></td>
+        <!-- fullmark not stored in api yet -->
+      </tr>
+    </tbody>
+  </table>
+</div>

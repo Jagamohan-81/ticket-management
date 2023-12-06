@@ -1,0 +1,68 @@
+/* You can add global styles to this file, and also import other style files */
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.loader-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+.btn {
+  border-radius: 5px;
+  margin-right: 2px;
+  border: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #172a74;
+}
+.btn-success {
+  background-color: green;
+}
+
+.btn-danger {
+  background-color: red;
+}
+
+.btn-primary:hover,
+.btn-primary:focus-visible,
+.btn-primary:focus-within,
+.btn-primary:active {
+  background-color: #f0f0f0;
+  color: #172a74;
+  border-color: #172a74;
+}
+.btn-danger:hover,
+.btn-danger:focus-visible,
+.btn-danger:focus-within,
+.btn-danger:active {
+  background-color: #f0f0f0;
+  color: red;
+  border-color: red;
+}
+.btn-success:hover,
+.btn-success:focus-visible,
+.btn-success:focus-within,
+.btn-success:active {
+  background-color: #f0f0f0;
+  color: green;
+  border-color: green;
+}
+
+.btn-close{
+   color: red;
+}
+
+.fc .fc-popover{
+  z-index: 1 !important;
+}

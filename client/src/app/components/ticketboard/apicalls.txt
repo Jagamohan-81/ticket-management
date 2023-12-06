@@ -1,0 +1,129 @@
+//table from where taken
+      if (selectedTicketIndex == 0) {
+        this.ticketService
+          .updatePriority(sameStatusOldCol[selectedTicketIndex + 1].id, {
+            next: 0,
+            status: newStatus,
+          })
+          .subscribe(
+            (res: any) => {
+              this.loading = false;
+              this.getProjectTickets();
+            },
+            (error) => {
+              this.loading = false;
+              alert(error.detail);
+              console.error('Error fetching subjects:', error);
+            }
+          );
+      } else if (selectedTicketIndex == sameStatusOldCol.length - 1) {
+        //no affect on old column
+      } else {
+        //before update
+        this.ticketService
+          .updatePriority(sameStatusOldCol[selectedTicketIndex + 1].id, {
+            next: sameStatusOldCol[selectedTicketIndex - 1].id,
+            status: newStatus,
+          })
+          .subscribe(
+            (res: any) => {
+              this.loading = false;
+              this.getProjectTickets();
+            },
+            (error) => {
+              this.loading = false;
+              alert(error.detail);
+              console.error('Error fetching subjects:', error);
+            }
+          );
+      }
+
+      //table to whom droped
+
+      if (droppedTicketIndex == 0) {
+        this.ticketService
+          .updatePriority(sameStatus[droppedTicketIndex].id, {
+            next: ticket.id,
+            status: newStatus,
+          })
+          .subscribe(
+            (res: any) => {
+              this.loading = false;
+              this.getProjectTickets();
+            },
+            (error) => {
+              this.loading = false;
+              alert(error.detail);
+              console.error('Error fetching subjects:', error);
+            }
+          );
+        this.ticketService
+          .updatePriority(ticket.id, {
+            next: 0,
+            status: newStatus,
+          })
+          .subscribe(
+            (res: any) => {
+              this.loading = false;
+              this.getProjectTickets();
+            },
+            (error) => {
+              this.loading = false;
+              alert(error.detail);
+              console.error('Error fetching subjects:', error);
+            }
+          );
+      } else if (droppedTicketIndex == sameStatus.length - 1) {
+        this.ticketService
+          .updatePriority(ticket.id, {
+            next: sameStatus[droppedTicketIndex].id,
+            status: newStatus,
+          })
+          .subscribe(
+            (res: any) => {
+              this.loading = false;
+              this.getProjectTickets();
+            },
+            (error) => {
+              this.loading = false;
+              alert(error.detail);
+              console.error('Error fetching subjects:', error);
+            }
+          );
+      } 
+      else {
+        //before update
+        this.ticketService
+          .updatePriority(ticket.id, {
+            next: sameStatus[droppedTicketIndex].next,
+            status: newStatus,
+          })
+          .subscribe(
+            (res: any) => {
+              this.loading = false;
+              this.getProjectTickets();
+            },
+            (error) => {
+              this.loading = false;
+              alert(error.detail);
+              console.error('Error fetching subjects:', error);
+            }
+          );
+
+        this.ticketService
+          .updatePriority(sameStatus[droppedTicketIndex].id, {
+            next: ticket.id,
+            status: newStatus,
+          })
+          .subscribe(
+            (res: any) => {
+              this.loading = false;
+              this.getProjectTickets();
+            },
+            (error) => {
+              this.loading = false;
+              alert(error.detail);
+              console.error('Error fetching subjects:', error);
+            }
+          );
+      }
