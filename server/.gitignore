@@ -138,3 +138,4 @@ media/
 core/dev.py
 core/qa.py
 zappa_settings.json
+server/
