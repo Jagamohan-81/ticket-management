@@ -40,3 +40,5 @@ A simple ticket management application built with Django for tracking tasks and 
    ```bash
    git clone [https://github.com/your-username/ticket-management.git](https://github.com/Jagamohan-81/ticket-management)https://github.com/Jagamohan-81/ticket-management
    cd ticket-management
+
+Thank You
